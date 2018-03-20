@@ -1,0 +1,6 @@
+author = Liburia
+version = 0.1.0
+displayName = Directional Melee
+homepage = https://github.com/Liburia/DirectionalMelee
+buildIgnore = .git*, *.csproj
+side = Both

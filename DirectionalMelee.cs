@@ -16,6 +16,10 @@ namespace DirectionalMelee
             HoldItemRotation,
         }
 
+#if DEBUG
+        public const bool DEBUG = false;
+#endif
+
         public static DirectionalMelee instance;
 
         public static float PI = (float)Math.PI;
@@ -125,33 +129,35 @@ namespace DirectionalMelee
 #if DEBUG
         public override void PostDrawInterface(SpriteBatch spriteBatch)
         {
-            Player player = Main.LocalPlayer;
-            if (Main.ActivePlayersCount > 1)
-                player = Main.player[(Main.myPlayer + 1) % 2];
-            Vector2 playerPosScreen = player.position - Main.screenPosition;
-            Vector2 playerCenter = Vector2.Transform(player.Center - Main.screenPosition, Main.GameViewMatrix.ZoomMatrix);
-            Vector2 playeTopRight = Vector2.Transform(player.TopRight - Main.screenPosition, Main.GameViewMatrix.ZoomMatrix);
-            Vector2 mousePosWorld = Main.screenPosition + new Vector2(Main.mouseX, Main.mouseY);
+            if (DEBUG)
+            {
+                Player player = Main.LocalPlayer;
+                if (Main.ActivePlayersCount > 1)
+                    player = Main.player[(Main.myPlayer + 1) % 2];
+                Vector2 playerPosScreen = player.position - Main.screenPosition;
+                Vector2 playerCenter = Vector2.Transform(player.Center - Main.screenPosition, Main.GameViewMatrix.ZoomMatrix);
+                Vector2 playeTopRight = Vector2.Transform(player.TopRight - Main.screenPosition, Main.GameViewMatrix.ZoomMatrix);
+                Vector2 mousePosWorld = Main.screenPosition + new Vector2(Main.mouseX, Main.mouseY);
 
-            float mouseDirection = (mousePosWorld - player.itemLocation).ToRotation();
-            //spriteBatch.Draw(Main.magicPixel, new Rectangle((int)playerCenter.X, (int)playerCenter.Y, 1, 1), Color.Cyan);
-            //spriteBatch.Draw(Main.magicPixel, new Rectangle((int)playeTopRight.X, (int)playerCenter.Y, 1, 1), Color.Red);
-            //spriteBatch.Draw(Main.magicPixel, new Rectangle((int)playerCenter.X, (int)playeTopRight.Y, 1, 1), Color.Red);
-            //spriteBatch.Draw(Main.magicPixel, new Rectangle((int)playeTopRight.X, (int)playeTopRight.Y, 1, 1), Color.Red);
-            //spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(player.itemLocation.X - Main.screenPosition.X), (int)(player.itemLocation.Y - Main.screenPosition.Y), 10, 10), Color.Red);
+                float mouseDirection = (mousePosWorld - player.itemLocation).ToRotation();
+                //spriteBatch.Draw(Main.magicPixel, new Rectangle((int)playerCenter.X, (int)playerCenter.Y, 1, 1), Color.Cyan);
+                //spriteBatch.Draw(Main.magicPixel, new Rectangle((int)playeTopRight.X, (int)playerCenter.Y, 1, 1), Color.Red);
+                //spriteBatch.Draw(Main.magicPixel, new Rectangle((int)playerCenter.X, (int)playeTopRight.Y, 1, 1), Color.Red);
+                //spriteBatch.Draw(Main.magicPixel, new Rectangle((int)playeTopRight.X, (int)playeTopRight.Y, 1, 1), Color.Red);
+                //spriteBatch.Draw(Main.magicPixel, new Rectangle((int)(player.itemLocation.X - Main.screenPosition.X), (int)(player.itemLocation.Y - Main.screenPosition.Y), 10, 10), Color.Red);
 
-            Rectangle debugRectScreen = new Rectangle((int)(debugRect.X - Main.screenPosition.X), (int)(debugRect.Y - (int)Main.screenPosition.Y), debugRect.Width, debugRect.Height);
-            spriteBatch.Draw(Main.magicPixel, debugRectScreen, Color.Red);
-            //ChatManager.DrawColorCodedString(spriteBatch, Main.fontDeathText, debugRect.ToString() + "/" + debugRectScreen.ToString(), new Vector2(200, 100), Color.White, 0, Vector2.Zero, Vector2.One * 0.5f);
+                Rectangle debugRectScreen = new Rectangle((int)(debugRect.X - Main.screenPosition.X), (int)(debugRect.Y - (int)Main.screenPosition.Y), debugRect.Width, debugRect.Height);
+                spriteBatch.Draw(Main.magicPixel, debugRectScreen, Color.Red);
+                //ChatManager.DrawColorCodedString(spriteBatch, Main.fontDeathText, debugRect.ToString() + "/" + debugRectScreen.ToString(), new Vector2(200, 100), Color.White, 0, Vector2.Zero, Vector2.One * 0.5f);
 
-            ChatManager.DrawColorCodedString(spriteBatch, Main.fontDeathText, player.itemRotation.ToString(), new Vector2(100, 100), Color.White, 0, Vector2.Zero, Vector2.One * 0.5f);
-            ChatManager.DrawColorCodedString(spriteBatch, Main.fontDeathText, mouseDirection.ToString(), new Vector2(100, 120), Color.White, 0, Vector2.Zero, Vector2.One * 0.5f);
-            ChatManager.DrawColorCodedString(spriteBatch, Main.fontDeathText, debugString, new Vector2(100, 140), Color.White, 0, Vector2.Zero, Vector2.One * 0.5f);
-            ChatManager.DrawColorCodedString(spriteBatch, Main.fontDeathText, player.itemAnimation.ToString() + "/" + player.itemAnimationMax.ToString(), new Vector2(100, 160), Color.White, 0, Vector2.Zero, Vector2.One * 0.5f);
-            ChatManager.DrawColorCodedString(spriteBatch, Main.fontDeathText, player.itemTime.ToString(), new Vector2(100, 180), Color.White, 0, Vector2.Zero, Vector2.One * 0.5f);
-            ChatManager.DrawColorCodedString(spriteBatch, Main.fontDeathText, player.HeldItem.useTurn.ToString(), new Vector2(100, 200), Color.White, 0, Vector2.Zero, Vector2.One * 0.5f);
-            ChatManager.DrawColorCodedString(spriteBatch, Main.fontDeathText, player.GetModPlayer<DirectionalMeleePlayer>().holdPlayerDirection.ToString() + "/" + player.GetModPlayer<DirectionalMeleePlayer>().holdItemRotation.ToString(), new Vector2(100, 220), Color.White, 0, Vector2.Zero, Vector2.One * 0.5f);
-
+                ChatManager.DrawColorCodedString(spriteBatch, Main.fontDeathText, player.itemRotation.ToString(), new Vector2(100, 100), Color.White, 0, Vector2.Zero, Vector2.One * 0.5f);
+                ChatManager.DrawColorCodedString(spriteBatch, Main.fontDeathText, mouseDirection.ToString(), new Vector2(100, 120), Color.White, 0, Vector2.Zero, Vector2.One * 0.5f);
+                ChatManager.DrawColorCodedString(spriteBatch, Main.fontDeathText, debugString, new Vector2(100, 140), Color.White, 0, Vector2.Zero, Vector2.One * 0.5f);
+                ChatManager.DrawColorCodedString(spriteBatch, Main.fontDeathText, player.itemAnimation.ToString() + "/" + player.itemAnimationMax.ToString(), new Vector2(100, 160), Color.White, 0, Vector2.Zero, Vector2.One * 0.5f);
+                ChatManager.DrawColorCodedString(spriteBatch, Main.fontDeathText, player.itemTime.ToString(), new Vector2(100, 180), Color.White, 0, Vector2.Zero, Vector2.One * 0.5f);
+                ChatManager.DrawColorCodedString(spriteBatch, Main.fontDeathText, player.HeldItem.useTurn.ToString(), new Vector2(100, 200), Color.White, 0, Vector2.Zero, Vector2.One * 0.5f);
+                ChatManager.DrawColorCodedString(spriteBatch, Main.fontDeathText, player.GetModPlayer<DirectionalMeleePlayer>().holdPlayerDirection.ToString() + "/" + player.GetModPlayer<DirectionalMeleePlayer>().holdItemRotation.ToString(), new Vector2(100, 220), Color.White, 0, Vector2.Zero, Vector2.One * 0.5f);
+            }
         }
 #endif
     }

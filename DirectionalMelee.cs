@@ -55,6 +55,10 @@ namespace DirectionalMelee
         {
             instance = this;
         }
+        public override void Unload()
+        {
+            instance = null;
+        }
 
         public override void HandlePacket(BinaryReader reader, int whoAmI)
         {

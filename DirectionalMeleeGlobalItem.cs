@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
+using Terraria.ObjectData;
 
 namespace DirectionalMelee
 {
@@ -30,7 +31,18 @@ namespace DirectionalMelee
             if (item.useStyle == 1 || item.useStyle == 3)
             {
                 DirectionalMeleePlayer modPlayer = player.GetModPlayer<DirectionalMeleePlayer>();
-                player.ChangeDir(modPlayer.holdPlayerDirection);
+
+                //TODO: Torches have alternates, which makes them also not change dir. Seems fucky, maybe needs change?
+                bool canChangeDir = true;
+                if (item.createTile > -1)
+                {
+                    TileObjectData tod = TileObjectData.GetTileData(item.createTile, 0);
+                    if (tod != null && tod.AlternatesCount > 0)
+                        canChangeDir = false;
+                }
+                if (canChangeDir)
+                    player.ChangeDir(modPlayer.holdPlayerDirection);
+
                 if (item.useStyle == 1)
                 {
                     if (player.direction == 1)
@@ -79,7 +91,7 @@ namespace DirectionalMelee
         }
 
         //TODO: Doesn't work with TML 0.10.1.3 https://github.com/blushiemagic/tModLoader/issues/319
-        public override bool UseItemFrame(Item item, Player player)
+        /*public override bool UseItemFrame(Item item, Player player)
         {
             if (item.useStyle == 1 || item.useStyle == 3)
             {
@@ -112,7 +124,7 @@ namespace DirectionalMelee
                 return true;
             }
             return false;
-        }
+        }*/
 
         public override void UseItemHitbox(Item item, Player player, ref Rectangle hitbox, ref bool noHitbox)
         {

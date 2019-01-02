@@ -14,7 +14,7 @@ namespace DirectionalMelee
         public float holdItemRotation = 0;
 
 
-        //TODO: Remove after TML fixes the call to GlobalItem.UseItemFrame
+        //TODO: Move to GlobalItem.UseItemFrame after TML fixes the call to it
         public override void PostUpdate()
         {
             PlayerFrame();

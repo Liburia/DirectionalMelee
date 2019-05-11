@@ -102,7 +102,7 @@ namespace DirectionalMelee
                         }
                         break;
                     default:
-                        ErrorLogger.Log("TestMod: Unknown Message type: " + msgType);
+                        Logger.Debug("TestMod: Unknown Message type: " + msgType);
                         break;
                 }
             }
@@ -124,7 +124,7 @@ namespace DirectionalMelee
                         player.GetModPlayer<DirectionalMeleePlayer>().holdItemRotation = holdItemRotation;
                         break;
                     default:
-                        ErrorLogger.Log("TestMod: Unknown Message type: " + msgType);
+                        Logger.Debug("TestMod: Unknown Message type: " + msgType);
                         break;
                 }
             }

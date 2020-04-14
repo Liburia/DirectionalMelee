@@ -8,16 +8,27 @@ using System.IO;
 
 namespace DirectionalMelee
 {
-	class DirectionalMeleePlayer : ModPlayer
+    class DirectionalMeleePlayer : ModPlayer
     {
         public int holdPlayerDirection = 1;
         public float holdItemRotation = 0;
 
+        public bool isItemIncluded = false;
+
+        public override void PreUpdate()
+        {
+            Item item = player.HeldItem;
+            var modDM = (DirectionalMelee)mod;
+            isItemIncluded = (modDM.includedUseStyles.Contains(item.useStyle) || modDM.includedItems.Contains(item.type)) && !modDM.excludedItems.Contains(item.type);
+        }
 
         //TODO: Move to GlobalItem.UseItemFrame after TML fixes the call to it
         public override void PostUpdate()
         {
             PlayerFrame();
+
+            //This goes here instead of ResetEffects because there is no generic update hook for the player.
+            isItemIncluded = false;
         }
         void PlayerFrame()
         {
@@ -25,7 +36,7 @@ namespace DirectionalMelee
             float itemDirection = GetHeldItemRotation();
             if (player.itemAnimation > 0 && player.inventory[player.selectedItem].useStyle != 10)
             {
-                if (item.useStyle == 0 || item.useStyle == 1 || item.useStyle == 3)
+                if (isItemIncluded)
                 {
                     if (item.useStyle == 3 && player.itemAnimation > player.itemAnimationMax * 0.666f)
                     {
@@ -88,10 +99,10 @@ namespace DirectionalMelee
         /// <returns></returns>
         public float GetHeldItemRotation()
         {
+            Item item = player.HeldItem;
             float itemDirection = player.itemRotation * player.direction * player.gravDir;
             if (Math.Abs(itemDirection) > DirectionalMelee.PI * 2)
                 itemDirection %= DirectionalMelee.PI * 2;
-            Item item = player.HeldItem;
             if (item.useStyle == 1 || item.useStyle == 3)
             {
                 itemDirection += DirectionalMelee.quarterPI;

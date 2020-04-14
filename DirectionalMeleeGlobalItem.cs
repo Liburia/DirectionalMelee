@@ -15,7 +15,7 @@ namespace DirectionalMelee
         public override bool CanUseItem(Item item, Player player)
         {
             DirectionalMeleePlayer modPlayer = player.GetModPlayer<DirectionalMeleePlayer>();
-            if (Main.myPlayer == player.whoAmI && (item.useStyle == 1 || item.useStyle == 3))
+            if (Main.myPlayer == player.whoAmI && modPlayer.isItemIncluded)
             {
                 Vector2 mousePosWorld = Main.screenPosition + new Vector2(Main.mouseX, Main.mouseY);
                 modPlayer.holdPlayerDirection = -1;
@@ -28,10 +28,9 @@ namespace DirectionalMelee
 
         public override void UseStyle(Item item, Player player)
         {
-            if (item.useStyle == 1 || item.useStyle == 3)
+            DirectionalMeleePlayer modPlayer = player.GetModPlayer<DirectionalMeleePlayer>();
+            if (modPlayer.isItemIncluded)
             {
-                DirectionalMeleePlayer modPlayer = player.GetModPlayer<DirectionalMeleePlayer>();
-
                 //TODO: Torches have alternates, which makes them also not change dir. Seems fucky, maybe needs change?
                 bool canChangeDir = true;
                 if (item.createTile > -1)
@@ -129,53 +128,57 @@ namespace DirectionalMelee
         public override void UseItemHitbox(Item item, Player player, ref Rectangle hitbox, ref bool noHitbox)
         {
             DirectionalMeleePlayer modPlayer = player.GetModPlayer<DirectionalMeleePlayer>();
-            float itemLengthSqr = Vector2.DistanceSquared(Vector2.Zero, new Vector2(Main.itemTexture[item.type].Width, Main.itemTexture[item.type].Height));
-            float itemLength = (float)Math.Sqrt(itemLengthSqr);
-            float itemRotation = modPlayer.GetHeldItemRotation();
 
-            hitbox = new Rectangle();
-
-            hitbox.Width = (int)(Math.Abs(Math.Sin(itemRotation)) * itemLength) + DirectionalMelee.increaseHitboxBy;
-            hitbox.Height = (int)(Math.Abs(Math.Cos(itemRotation)) * itemLength) + DirectionalMelee.increaseHitboxBy;
-            hitbox.Width = (int)((float)hitbox.Width * item.scale);
-            hitbox.Height = (int)((float)hitbox.Height * item.scale);
-
-            if (item.useStyle == 1)
+            if (modPlayer.isItemIncluded)
             {
-                if (hitbox.Width < DirectionalMelee.minHitboxSizeSwing)
-                    hitbox.Width = DirectionalMelee.minHitboxSizeSwing;
-                if (hitbox.Height < DirectionalMelee.minHitboxSizeSwing)
-                    hitbox.Height = DirectionalMelee.minHitboxSizeSwing;
-            }
-            else if (item.useStyle == 3)
-            {
-                if (hitbox.Width < DirectionalMelee.minHitboxSizeStab)
-                    hitbox.Width = DirectionalMelee.minHitboxSizeStab;
-                if (hitbox.Height < DirectionalMelee.minHitboxSizeStab)
-                    hitbox.Height = DirectionalMelee.minHitboxSizeStab;
-            }
+                float itemLengthSqr = Vector2.DistanceSquared(Vector2.Zero, new Vector2(Main.itemTexture[item.type].Width, Main.itemTexture[item.type].Height));
+                float itemLength = (float)Math.Sqrt(itemLengthSqr);
+                float itemRotation = modPlayer.GetHeldItemRotation();
 
-            hitbox.X = (int)player.itemLocation.X;
-            hitbox.Y = (int)player.itemLocation.Y;
+                hitbox = new Rectangle();
 
-            if (player.gravDir == -1)
-            {
-                hitbox.Y = (int)(player.position.Y + player.height + (player.position.Y - hitbox.Y));
-            }
-            if (player.direction == -1)
-            {
-                hitbox.X -= hitbox.Width;
+                hitbox.Width = (int)(Math.Abs(Math.Sin(itemRotation)) * itemLength) + DirectionalMelee.increaseHitboxBy;
+                hitbox.Height = (int)(Math.Abs(Math.Cos(itemRotation)) * itemLength) + DirectionalMelee.increaseHitboxBy;
+                hitbox.Width = (int)((float)hitbox.Width * item.scale);
+                hitbox.Height = (int)((float)hitbox.Height * item.scale);
+
+                if (item.useStyle == 1)
+                {
+                    if (hitbox.Width < DirectionalMelee.minHitboxSizeSwing)
+                        hitbox.Width = DirectionalMelee.minHitboxSizeSwing;
+                    if (hitbox.Height < DirectionalMelee.minHitboxSizeSwing)
+                        hitbox.Height = DirectionalMelee.minHitboxSizeSwing;
+                }
+                else if (item.useStyle == 3)
+                {
+                    if (hitbox.Width < DirectionalMelee.minHitboxSizeStab)
+                        hitbox.Width = DirectionalMelee.minHitboxSizeStab;
+                    if (hitbox.Height < DirectionalMelee.minHitboxSizeStab)
+                        hitbox.Height = DirectionalMelee.minHitboxSizeStab;
+                }
+
+                hitbox.X = (int)player.itemLocation.X;
+                hitbox.Y = (int)player.itemLocation.Y;
+
+                if (player.gravDir == -1)
+                {
+                    hitbox.Y = (int)(player.position.Y + player.height + (player.position.Y - hitbox.Y));
+                }
+                if (player.direction == -1)
+                {
+                    hitbox.X -= hitbox.Width;
+                    if (itemRotation < 0 || itemRotation > DirectionalMelee.PI)
+                        hitbox.X += hitbox.Width * 2;
+                }
+
                 if (itemRotation < 0 || itemRotation > DirectionalMelee.PI)
-                    hitbox.X += hitbox.Width * 2;
-            }
-
-            if (itemRotation < 0 || itemRotation > DirectionalMelee.PI)
-                hitbox.X -= hitbox.Width;
-            if (itemRotation < DirectionalMelee.halfPI)
-                hitbox.Y -= hitbox.Height;
+                    hitbox.X -= hitbox.Width;
+                if (itemRotation < DirectionalMelee.halfPI)
+                    hitbox.Y -= hitbox.Height;
 #if DEBUG
-            DirectionalMelee.instance.debugRect = hitbox;
+                DirectionalMelee.instance.debugRect = hitbox;
 #endif
+            }
         }
     }
 }

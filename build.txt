@@ -1,5 +1,5 @@
 ﻿author = Liburia
-version = 0.4.0
+version = 0.4.1
 displayName = Directional Melee - Aim your swings
 homepage = https://forums.terraria.org/index.php?threads/directional-melee-—-aim-your-swings-and-stabs.67776/
 buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*

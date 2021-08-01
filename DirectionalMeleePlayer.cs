@@ -13,61 +13,6 @@ namespace DirectionalMelee
         public int holdPlayerDirection = 1;
         public float holdItemRotation = 0;
 
-        public bool isItemIncluded = false;
-
-        public override void PreUpdate()
-        {
-            Item item = player.HeldItem;
-            var modDM = (DirectionalMelee)mod;
-            isItemIncluded = (modDM.includedUseStyles.Contains(item.useStyle) || modDM.includedItems.Contains(item.type)) && !modDM.excludedItems.Contains(item.type);
-        }
-
-        //TODO: Move to GlobalItem.UseItemFrame after TML fixes the call to it
-        public override void PostUpdate()
-        {
-            PlayerFrame();
-
-            //This goes here instead of ResetEffects because there is no generic update hook for the player.
-            isItemIncluded = false;
-        }
-        void PlayerFrame()
-        {
-            Item item = player.HeldItem;
-            float itemDirection = GetHeldItemRotation();
-            if (player.itemAnimation > 0 && player.inventory[player.selectedItem].useStyle != 10)
-            {
-                if (isItemIncluded)
-                {
-                    if (item.useStyle == 3 && player.itemAnimation > player.itemAnimationMax * 0.666f)
-                    {
-                        player.bodyFrame.Y = player.bodyFrame.Height * 6;
-                    }
-
-                    if (itemDirection < DirectionalMelee.handAngleThresholds[0])
-                    {
-                        player.bodyFrame.Y = player.bodyFrame.Height;
-                    }
-                    else if (itemDirection < DirectionalMelee.handAngleThresholds[1])
-                    {
-                        player.bodyFrame.Y = player.bodyFrame.Height * 2;
-                    }
-                    else if (itemDirection < DirectionalMelee.handAngleThresholds[2])
-                    {
-                        player.bodyFrame.Y = player.bodyFrame.Height * 3;
-                    }
-                    else if (itemDirection < DirectionalMelee.handAngleThresholds[3])
-                    {
-                        player.bodyFrame.Y = player.bodyFrame.Height * 4;
-                    }
-                    else
-                    {
-                        player.bodyFrame.Y = player.bodyFrame.Height * 17;
-                    }
-                    return;
-                }
-            }
-        }
-
         public override void clientClone(ModPlayer clientClone)
         {
             DirectionalMeleePlayer clone = clientClone as DirectionalMeleePlayer;
@@ -79,14 +24,14 @@ namespace DirectionalMelee
             DirectionalMeleePlayer clone = clientPlayer as DirectionalMeleePlayer;
             if (clone.holdPlayerDirection != holdPlayerDirection)
             {
-                ModPacket packet = mod.GetPacket();
+                ModPacket packet = Mod.GetPacket();
                 packet.Write((byte)DirectionalMelee.MessageType.HoldPlayerDirection);
                 packet.Write((sbyte)holdPlayerDirection);
                 packet.Send();
             }
             if (clone.holdItemRotation != holdItemRotation)
             {
-                ModPacket packet = mod.GetPacket();
+                ModPacket packet = Mod.GetPacket();
                 packet.Write((byte)DirectionalMelee.MessageType.HoldItemRotation);
                 packet.Write(holdItemRotation);
                 packet.Send();
@@ -94,20 +39,20 @@ namespace DirectionalMelee
         }
 
         /// <summary>
-        /// Value returned is in range from -0.5Pi to 1.5Pi. The min and max point towards the back of the player. 0 points up and Pi points down.
+        /// Value returned is in range from -0.5Pi to 1.5Pi. The min and max point towards the back of the Player. 0 points up and Pi points down.
         /// </summary>
         /// <returns></returns>
         public float GetHeldItemRotation()
         {
-            Item item = player.HeldItem;
-            float itemDirection = player.itemRotation * player.direction * player.gravDir;
+            Item item = Player.HeldItem;
+            float itemDirection = Player.itemRotation * Player.direction * Player.gravDir;
             if (Math.Abs(itemDirection) > DirectionalMelee.PI * 2)
                 itemDirection %= DirectionalMelee.PI * 2;
             if (item.useStyle == 1 || item.useStyle == 3)
             {
                 itemDirection += DirectionalMelee.quarterPI;
             }
-            if (player.direction == -1 && itemDirection < -DirectionalMelee.halfPI)
+            if (Player.direction == -1 && itemDirection < -DirectionalMelee.halfPI)
                 itemDirection += DirectionalMelee.PI * 2;
 
 
@@ -119,49 +64,49 @@ namespace DirectionalMelee
         /// <returns></returns>
         public float SetHeldItemRotation(float itemRotation)
         {
-            Item item = player.HeldItem;
+            Item item = Player.HeldItem;
             float newRotation = itemRotation;
             if (item.useStyle == 1 || item.useStyle == 3)
             {
                 newRotation -= DirectionalMelee.quarterPI;
             }
-            newRotation *= player.direction * player.gravDir;
+            newRotation *= Player.direction * Player.gravDir;
 
-            player.itemRotation = newRotation;
+            Player.itemRotation = newRotation;
 
             return newRotation;
         }
 
         /// <summary>
-        /// Moves the item to the correct position base on current player.itemRotation.
+        /// Moves the item to the correct position base on current Player.itemRotation.
         /// </summary>
         public void SetItemLocationHand()
         {
             //TODO: set thresholds for weapons with sprites different from 32px.
-            float num = player.mount.PlayerOffsetHitbox;
+            float num = Player.mount.PlayerOffsetHitbox;
             float itemDirection = GetHeldItemRotation();
             float offset;
-            Item item = player.HeldItem;
+            Item item = Player.HeldItem;
             if (itemDirection < DirectionalMelee.handAngleThresholds[0])
             {
                 offset = 10f;
-                if (Main.itemTexture[item.type].Width > 32)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Width > 32)
                 {
                     offset = 18f;
                 }
-                if (Main.itemTexture[item.type].Width >= 48)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Width >= 48)
                 {
                     offset = 22f;
                 }
-                if (Main.itemTexture[item.type].Width >= 52)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Width >= 52)
                 {
                     offset = 28f;
                 }
-                if (Main.itemTexture[item.type].Width >= 64)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Width >= 64)
                 {
                     offset = 32f;
                 }
-                if (Main.itemTexture[item.type].Width >= 92)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Width >= 92)
                 {
                     offset = 42f;
                 }
@@ -169,17 +114,17 @@ namespace DirectionalMelee
                 {
                     offset += 4f;
                 }
-                player.itemLocation.X = player.position.X + player.width * 0.5f - (Main.itemTexture[item.type].Width * 0.5f - offset) * player.direction;
+                Player.itemLocation.X = Player.position.X + Player.width * 0.5f - (Terraria.GameContent.TextureAssets.Item[item.type].Value.Width * 0.5f - offset) * Player.direction;
                 offset = 10f;
-                if (Main.itemTexture[item.type].Height > 32)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Height > 32)
                 {
                     offset = 10f;
                 }
-                if (Main.itemTexture[item.type].Height > 52)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Height > 52)
                 {
                     offset = 12f;
                 }
-                if (Main.itemTexture[item.type].Height > 64)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Height > 64)
                 {
                     offset = 14f;
                 }
@@ -187,24 +132,24 @@ namespace DirectionalMelee
                 {
                     offset += 4f;
                 }
-                player.itemLocation.Y = player.position.Y + offset + num;
+                Player.itemLocation.Y = Player.position.Y + offset + num;
             }
             else if (itemDirection < DirectionalMelee.handAngleThresholds[1])
             {
                 offset = 10f;
-                if (Main.itemTexture[item.type].Width > 32)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Width > 32)
                 {
                     offset = 18f;
                 }
-                if (Main.itemTexture[item.type].Width >= 52)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Width >= 52)
                 {
                     offset = 24f;
                 }
-                if (Main.itemTexture[item.type].Width >= 64)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Width >= 64)
                 {
                     offset = 28f;
                 }
-                if (Main.itemTexture[item.type].Width >= 92)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Width >= 92)
                 {
                     offset = 38f;
                 }
@@ -212,17 +157,17 @@ namespace DirectionalMelee
                 {
                     offset += 4f;
                 }
-                player.itemLocation.X = player.position.X + player.width * 0.5f + (Main.itemTexture[item.type].Width * 0.5f - offset) * player.direction;
+                Player.itemLocation.X = Player.position.X + Player.width * 0.5f + (Terraria.GameContent.TextureAssets.Item[item.type].Value.Width * 0.5f - offset) * Player.direction;
                 offset = 10f;
-                if (Main.itemTexture[item.type].Height > 32)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Height > 32)
                 {
                     offset = 8f;
                 }
-                if (Main.itemTexture[item.type].Height > 52)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Height > 52)
                 {
                     offset = 12f;
                 }
-                if (Main.itemTexture[item.type].Height > 64)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Height > 64)
                 {
                     offset = 14f;
                 }
@@ -230,24 +175,24 @@ namespace DirectionalMelee
                 {
                     offset += 4f;
                 }
-                player.itemLocation.Y = player.position.Y + offset + num;
+                Player.itemLocation.Y = Player.position.Y + offset + num;
             }
             else if (itemDirection < DirectionalMelee.handAngleThresholds[2])
             {
                 offset = 10f;
-                if (Main.itemTexture[item.type].Width > 32)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Width > 32)
                 {
                     offset = 14f;
                 }
-                if (Main.itemTexture[item.type].Width >= 52)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Width >= 52)
                 {
                     offset = 24f;
                 }
-                if (Main.itemTexture[item.type].Width >= 64)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Width >= 64)
                 {
                     offset = 28f;
                 }
-                if (Main.itemTexture[item.type].Width >= 92)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Width >= 92)
                 {
                     offset = 38f;
                 }
@@ -255,25 +200,25 @@ namespace DirectionalMelee
                 {
                     offset += 8f;
                 }
-                player.itemLocation.X = player.position.X + player.width * 0.5f + (Main.itemTexture[item.type].Width * 0.5f - offset) * player.direction;
-                player.itemLocation.Y = player.position.Y + 24f + num;
+                Player.itemLocation.X = Player.position.X + Player.width * 0.5f + (Terraria.GameContent.TextureAssets.Item[item.type].Value.Width * 0.5f - offset) * Player.direction;
+                Player.itemLocation.Y = Player.position.Y + 24f + num;
             }
             else if (itemDirection < DirectionalMelee.handAngleThresholds[3])
             {
                 offset = 12f;
-                if (Main.itemTexture[item.type].Width > 32)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Width > 32)
                 {
                     offset = 20f;
                 }
-                if (Main.itemTexture[item.type].Width >= 52)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Width >= 52)
                 {
                     offset = 26f;
                 }
-                if (Main.itemTexture[item.type].Width >= 64)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Width >= 64)
                 {
                     offset = 30f;
                 }
-                if (Main.itemTexture[item.type].Width >= 92)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Width >= 92)
                 {
                     offset = 40f;
                 }
@@ -281,17 +226,17 @@ namespace DirectionalMelee
                 {
                     offset += 4f;
                 }
-                player.itemLocation.X = player.position.X + player.width * 0.5f + (Main.itemTexture[item.type].Width * 0.5f - offset) * player.direction;
+                Player.itemLocation.X = Player.position.X + Player.width * 0.5f + (Terraria.GameContent.TextureAssets.Item[item.type].Value.Width * 0.5f - offset) * Player.direction;
                 offset = 28f;
-                if (Main.itemTexture[item.type].Height > 32)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Height > 32)
                 {
                     offset = 26f;
                 }
-                if (Main.itemTexture[item.type].Height > 52)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Height > 52)
                 {
                     offset = 30f;
                 }
-                if (Main.itemTexture[item.type].Height > 64)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Height > 64)
                 {
                     offset = 32f;
                 }
@@ -299,49 +244,49 @@ namespace DirectionalMelee
                 {
                     offset -= 4f;
                 }
-                player.itemLocation.Y = player.position.Y + offset + num;
+                Player.itemLocation.Y = Player.position.Y + offset + num;
             }
             else
             {
                 offset = 15f;
-                if (Main.itemTexture[item.type].Width > 32)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Width > 32)
                 {
                     offset = 13f;
                 }
-                if (Main.itemTexture[item.type].Width >= 48)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Width >= 48)
                 {
                     offset = 17f;
                 }
-                if (Main.itemTexture[item.type].Width >= 52)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Width >= 52)
                 {
                     offset = 23f;
                 }
-                if (Main.itemTexture[item.type].Width >= 64)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Width >= 64)
                 {
                     offset = 27f;
                 }
-                if (Main.itemTexture[item.type].Width >= 92)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Width >= 92)
                 {
                     offset = 37f;
                 }
-                player.itemLocation.X = player.position.X + player.width * 0.5f - (Main.itemTexture[item.type].Width * 0.5f - offset) * player.direction;
+                Player.itemLocation.X = Player.position.X + Player.width * 0.5f - (Terraria.GameContent.TextureAssets.Item[item.type].Value.Width * 0.5f - offset) * Player.direction;
                 offset = 23f;
-                if (Main.itemTexture[item.type].Height > 32)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Height > 32)
                 {
                     offset = 21f;
                 }
-                if (Main.itemTexture[item.type].Height > 52)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Height > 52)
                 {
                     offset = 25f;
                 }
-                if (Main.itemTexture[item.type].Height > 64)
+                if (Terraria.GameContent.TextureAssets.Item[item.type].Value.Height > 64)
                 {
                     offset = 27f;
                 }
-                player.itemLocation.Y = player.position.Y + offset + num;
+                Player.itemLocation.Y = Player.position.Y + offset + num;
             }
-            if (player.gravDir == -1)
-                player.itemLocation.Y = player.position.Y + player.height + (player.position.Y - player.itemLocation.Y);
+            if (Player.gravDir == -1)
+                Player.itemLocation.Y = Player.position.Y + Player.height + (Player.position.Y - Player.itemLocation.Y);
         }
     }
 }

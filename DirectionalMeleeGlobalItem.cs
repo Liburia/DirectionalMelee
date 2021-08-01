@@ -12,10 +12,21 @@ namespace DirectionalMelee
 {
     class DirectionalMeleeGlobalItem : GlobalItem
     {
+        bool isItemIncluded
+        {
+            get
+            {
+                Item item = Main.player[Main.myPlayer].HeldItem;
+                var modDM = DirectionalMelee.instance;
+                return (modDM.includedUseStyles.Contains(item.useStyle) || modDM.includedItems.Contains(item.type)) && !modDM.excludedItems.Contains(item.type);
+            }
+        }
+
+
         public override bool CanUseItem(Item item, Player player)
         {
             DirectionalMeleePlayer modPlayer = player.GetModPlayer<DirectionalMeleePlayer>();
-            if (Main.myPlayer == player.whoAmI && modPlayer.isItemIncluded)
+            if (Main.myPlayer == player.whoAmI && isItemIncluded)
             {
                 Vector2 mousePosWorld = Main.screenPosition + new Vector2(Main.mouseX, Main.mouseY);
                 modPlayer.holdPlayerDirection = -1;
@@ -26,10 +37,10 @@ namespace DirectionalMelee
             return true;
         }
 
-        public override void UseStyle(Item item, Player player)
+        public override void UseStyle(Item item, Player player, Rectangle heldItemFrame)
         {
             DirectionalMeleePlayer modPlayer = player.GetModPlayer<DirectionalMeleePlayer>();
-            if (modPlayer.isItemIncluded)
+            if (isItemIncluded)
             {
                 //TODO: Torches have alternates, which makes them also not change dir. Seems fucky, maybe needs change?
                 bool canChangeDir = true;
@@ -66,7 +77,7 @@ namespace DirectionalMelee
                     {
                         //TODO: replace with directional offset
                         //or dont, its overwritten later by SetItemLocationHand so it's useless right now and does nothing
-                        float offset = player.itemAnimation / player.itemAnimationMax * Main.itemTexture[item.type].Width * player.direction * item.scale * 1.2f - (10 * player.direction);
+                        float offset = player.itemAnimation / player.itemAnimationMax * Terraria.GameContent.TextureAssets.Item[item.type].Value.Width * player.direction * item.scale * 1.2f - (10 * player.direction);
                         if (offset > -4f && player.direction == -1)
                         {
                             offset = -8f;
@@ -89,49 +100,56 @@ namespace DirectionalMelee
             }
         }
 
-        //TODO: Doesn't work with TML 0.10.1.3 https://github.com/blushiemagic/tModLoader/issues/319
-        /*public override bool UseItemFrame(Item item, Player player)
+        public override void UseItemFrame(Item item, Player player)
         {
-            if (item.useStyle == 1 || item.useStyle == 3)
+            DirectionalMeleePlayer modPlayer = player.GetModPlayer<DirectionalMeleePlayer>();
+
+            float itemDirection = modPlayer.GetHeldItemRotation();
+            if (player.itemAnimation > 0 && player.inventory[player.selectedItem].useStyle != 10)
             {
-                DirectionalMeleePlayer modPlayer = player.GetModPlayer<DirectionalMeleePlayer>();
-                float itemDirection = modPlayer.GetHeldItemRotation();
-                if (item.useStyle == 3 && player.itemAnimation > player.itemAnimationMax * 0.666f)
+                if (isItemIncluded)
                 {
-                    player.bodyFrame.Y = player.bodyFrame.Height * 6;
+                    if (item.useStyle == 3 && player.itemAnimation > player.itemAnimationMax * 0.666f)
+                    {
+                        player.bodyFrame.Y = player.bodyFrame.Height * 6;
+                    }
+
+                    if (itemDirection < DirectionalMelee.handAngleThresholds[0])
+                    {
+                        player.bodyFrame.Y = player.bodyFrame.Height;
+                    }
+                    else if (itemDirection < DirectionalMelee.handAngleThresholds[1])
+                    {
+                        player.bodyFrame.Y = player.bodyFrame.Height * 2;
+                    }
+                    else if (itemDirection < DirectionalMelee.handAngleThresholds[2])
+                    {
+                        player.bodyFrame.Y = player.bodyFrame.Height * 3;
+                    }
+                    else if (itemDirection < DirectionalMelee.handAngleThresholds[3])
+                    {
+                        player.bodyFrame.Y = player.bodyFrame.Height * 4;
+                    }
+                    else
+                    {
+                        player.bodyFrame.Y = player.bodyFrame.Height * 17;
+                    }
                 }
-                else if (itemDirection < DirectionalMelee.handAngleThresholds[0])
-                {
-                    player.bodyFrame.Y = player.bodyFrame.Height;
-                }
-                else if (itemDirection < DirectionalMelee.handAngleThresholds[1])
-                {
-                    player.bodyFrame.Y = player.bodyFrame.Height * 2;
-                }
-                else if (itemDirection < DirectionalMelee.handAngleThresholds[2])
-                {
-                    player.bodyFrame.Y = player.bodyFrame.Height * 3;
-                }
-                else if (itemDirection < DirectionalMelee.handAngleThresholds[3])
-                {
-                    player.bodyFrame.Y = player.bodyFrame.Height * 4;
-                }
-                else
-                {
-                    player.bodyFrame.Y = player.bodyFrame.Height * 17;
-                }
-                return true;
             }
-            return false;
-        }*/
+        }
+
+        public override void HoldItem(Item item, Player player)
+        {
+            base.HoldItem(item, player);
+        }
 
         public override void UseItemHitbox(Item item, Player player, ref Rectangle hitbox, ref bool noHitbox)
         {
             DirectionalMeleePlayer modPlayer = player.GetModPlayer<DirectionalMeleePlayer>();
 
-            if (modPlayer.isItemIncluded)
+            if (isItemIncluded)
             {
-                float itemLengthSqr = Vector2.DistanceSquared(Vector2.Zero, new Vector2(Main.itemTexture[item.type].Width, Main.itemTexture[item.type].Height));
+                float itemLengthSqr = Vector2.DistanceSquared(Vector2.Zero, new Vector2(Terraria.GameContent.TextureAssets.Item[item.type].Value.Width, Terraria.GameContent.TextureAssets.Item[item.type].Value.Height));
                 float itemLength = (float)Math.Sqrt(itemLengthSqr);
                 float itemRotation = modPlayer.GetHeldItemRotation();
 

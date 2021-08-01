@@ -1,1 +1,1 @@
-Directional Melee makes all swinging and stabbing weapons target your mouse cursor instead of always going above your head and forwad.
+Directional Melee makes all swinging weapons target your mouse cursor instead of always going overhead.

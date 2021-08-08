@@ -50,15 +50,7 @@ namespace DirectionalMelee
 #endif
 
 
-        public DirectionalMelee()
-        {
-            Properties = new ModProperties()
-            {
-                Autoload = true,
-                AutoloadGores = true,
-                AutoloadSounds = true
-            };
-        }
+        public DirectionalMelee() { }
 
         public override void Load()
         {

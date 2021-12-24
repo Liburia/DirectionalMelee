@@ -41,7 +41,7 @@ namespace DirectionalMelee
                 ChatManager.DrawColorCodedString(spriteBatch, Terraria.GameContent.FontAssets.DeathText.Value, player.itemAnimation.ToString() + "/" + player.itemAnimationMax.ToString(), new Vector2(100, 160), Color.White, 0, Vector2.Zero, Vector2.One * 0.5f);
                 ChatManager.DrawColorCodedString(spriteBatch, Terraria.GameContent.FontAssets.DeathText.Value, player.itemTime.ToString(), new Vector2(100, 180), Color.White, 0, Vector2.Zero, Vector2.One * 0.5f);
                 ChatManager.DrawColorCodedString(spriteBatch, Terraria.GameContent.FontAssets.DeathText.Value, player.HeldItem.useTurn.ToString(), new Vector2(100, 200), Color.White, 0, Vector2.Zero, Vector2.One * 0.5f);
-                ChatManager.DrawColorCodedString(spriteBatch, Terraria.GameContent.FontAssets.DeathText.Value, player.GetModPlayer<DirectionalMeleePlayer>().holdPlayerDirection.ToString() + "/" + player.GetModPlayer<DirectionalMeleePlayer>().holdItemRotation.ToString(), new Vector2(100, 220), Color.White, 0, Vector2.Zero, Vector2.One * 0.5f);
+                ChatManager.DrawColorCodedString(spriteBatch, Terraria.GameContent.FontAssets.DeathText.Value, player.GetModPlayer<DirectionalMeleePlayer>().useDirection.ToString() + "/" + player.GetModPlayer<DirectionalMeleePlayer>().useRotation.ToString(), new Vector2(100, 220), Color.White, 0, Vector2.Zero, Vector2.One * 0.5f);
             }
         }
 #endif

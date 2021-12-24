@@ -10,33 +10,8 @@ namespace DirectionalMelee
 {
     class DirectionalMeleePlayer : ModPlayer
     {
-        public int holdPlayerDirection = 1;
-        public float holdItemRotation = 0;
-
-        public override void clientClone(ModPlayer clientClone)
-        {
-            DirectionalMeleePlayer clone = clientClone as DirectionalMeleePlayer;
-            clone.holdPlayerDirection = holdPlayerDirection;
-            clone.holdItemRotation = holdItemRotation;
-        }
-        public override void SendClientChanges(ModPlayer clientPlayer)
-        {
-            DirectionalMeleePlayer clone = clientPlayer as DirectionalMeleePlayer;
-            if (clone.holdPlayerDirection != holdPlayerDirection)
-            {
-                ModPacket packet = Mod.GetPacket();
-                packet.Write((byte)DirectionalMelee.MessageType.HoldPlayerDirection);
-                packet.Write((sbyte)holdPlayerDirection);
-                packet.Send();
-            }
-            if (clone.holdItemRotation != holdItemRotation)
-            {
-                ModPacket packet = Mod.GetPacket();
-                packet.Write((byte)DirectionalMelee.MessageType.HoldItemRotation);
-                packet.Write(holdItemRotation);
-                packet.Send();
-            }
-        }
+        public int useDirection = 1;
+        public float useRotation = 0;
 
         /// <summary>
         /// Value returned is in range from -0.5Pi to 1.5Pi. The min and max point towards the back of the Player. 0 points up and Pi points down.

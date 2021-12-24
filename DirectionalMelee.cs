@@ -13,8 +13,10 @@ namespace DirectionalMelee
     {
         public enum MessageType : byte
         {
-            HoldPlayerDirection,
-            HoldItemRotation,
+            /// <summary>
+            /// Direction of the player and rotation towards the cursor
+            /// </summary>
+            UseLocation
         }
 
 #if DEBUG
@@ -100,26 +102,20 @@ namespace DirectionalMelee
                 ModPacket packet;
                 switch (msgType)
                 {
-                    case MessageType.HoldPlayerDirection:
-                        int holdPlayerDirection = reader.ReadSByte();
+                    case MessageType.UseLocation:
+                        int useDirection = reader.ReadSByte();
+                        float useRotation = reader.ReadSingle();
+
                         player = Main.player[whoAmI];
-                        player.GetModPlayer<DirectionalMeleePlayer>().holdPlayerDirection = holdPlayerDirection;
+                        var modPlayer = player.GetModPlayer<DirectionalMeleePlayer>();
+
+                        modPlayer.useDirection = useDirection;
+                        modPlayer.useRotation = useRotation;
 
                         packet = GetPacket();
-                        packet.Write((byte)MessageType.HoldPlayerDirection);
-                        packet.Write((sbyte)holdPlayerDirection);
-                        packet.Write((byte)whoAmI);
-
-                        packet.Send(ignoreClient: whoAmI);
-                        break;
-                    case MessageType.HoldItemRotation:
-                        float holdItemRotation = reader.ReadSingle();
-                        player = Main.player[whoAmI];
-                        player.GetModPlayer<DirectionalMeleePlayer>().holdItemRotation = holdItemRotation;
-
-                        packet = GetPacket();
-                        packet.Write((byte)MessageType.HoldItemRotation);
-                        packet.Write(holdItemRotation);
+                        packet.Write((byte)MessageType.UseLocation);
+                        packet.Write((sbyte)useDirection);
+                        packet.Write(useRotation);
                         packet.Write((byte)whoAmI);
 
                         packet.Send(ignoreClient: whoAmI);
@@ -134,17 +130,16 @@ namespace DirectionalMelee
                 int playerIndex;
                 switch (msgType)
                 {
-                    case MessageType.HoldPlayerDirection:
-                        int holdPlayerDirection = reader.ReadSByte();
+                    case MessageType.UseLocation:
+                        int useDirection = reader.ReadSByte();
+                        float useRotation = reader.ReadSingle();
                         playerIndex = reader.ReadByte();
+
                         player = Main.player[playerIndex];
-                        player.GetModPlayer<DirectionalMeleePlayer>().holdPlayerDirection = holdPlayerDirection;
-                        break;
-                    case MessageType.HoldItemRotation:
-                        float holdItemRotation = reader.ReadSingle();
-                        playerIndex = reader.ReadByte();
-                        player = Main.player[playerIndex];
-                        player.GetModPlayer<DirectionalMeleePlayer>().holdItemRotation = holdItemRotation;
+                        var modPlayer = player.GetModPlayer<DirectionalMeleePlayer>();
+
+                        modPlayer.useDirection = useDirection;
+                        modPlayer.useRotation = useRotation;
                         break;
                     default:
                         Logger.Debug("Unknown Message type: " + msgType);
@@ -164,6 +159,16 @@ namespace DirectionalMelee
         private void ExcludeItem(int item)
         {
             excludedItems.Add(item);
+        }
+
+        /// <summary>
+        /// Returns whether the item is affected by Directional Melee or not
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        public bool IsItemIncluded(Item item)
+        {
+            return (includedUseStyles.Contains(item.useStyle) || includedItems.Contains(item.type)) && !excludedItems.Contains(item.type);
         }
     }
 }

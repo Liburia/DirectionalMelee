@@ -20,7 +20,7 @@ namespace DirectionalMelee
         }
 
 #if DEBUG
-        public const bool DEBUG = false;
+        public const bool DEBUG = true;
 #endif
 
         public static DirectionalMelee instance;

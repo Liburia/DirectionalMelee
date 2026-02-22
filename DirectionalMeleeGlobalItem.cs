@@ -159,7 +159,11 @@ namespace DirectionalMelee
             float scale = player.GetAdjustedItemScale(item);
             hitbox.Width = (int)((float)hitbox.Width * scale);
             hitbox.Height = (int)((float)hitbox.Height * scale);
-            DirectionalMelee.instance.debugString = scale.ToString();
+#if DEBUG
+            if (DirectionalMelee.DEBUG) {
+                DirectionalMelee.instance.debugString = scale.ToString();
+            }
+#endif
 
             if (item.useStyle == 1)
             {

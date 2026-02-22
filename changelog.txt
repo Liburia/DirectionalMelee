@@ -1,1 +1,2 @@
+Fix weapon size size not affecting weapon hitbox
 Fixed an exception when running on the server

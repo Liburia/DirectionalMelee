@@ -155,8 +155,11 @@ namespace DirectionalMelee
 
             hitbox.Width = (int)(Math.Abs(Math.Sin(itemRotation)) * itemLength) + DirectionalMelee.increaseHitboxBy;
             hitbox.Height = (int)(Math.Abs(Math.Cos(itemRotation)) * itemLength) + DirectionalMelee.increaseHitboxBy;
-            hitbox.Width = (int)((float)hitbox.Width * item.scale);
-            hitbox.Height = (int)((float)hitbox.Height * item.scale);
+
+            float scale = player.GetAdjustedItemScale(item);
+            hitbox.Width = (int)((float)hitbox.Width * scale);
+            hitbox.Height = (int)((float)hitbox.Height * scale);
+            DirectionalMelee.instance.debugString = scale.ToString();
 
             if (item.useStyle == 1)
             {

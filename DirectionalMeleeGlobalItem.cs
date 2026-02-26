@@ -57,7 +57,7 @@ namespace DirectionalMelee
             if (canChangeDir)
                 player.ChangeDir(modPlayer.useDirection);
 
-            if (item.useStyle == 1)
+            if (item.useStyle == ItemUseStyleID.Swing)
             {
                 if (player.direction == 1)
                 {
@@ -99,7 +99,7 @@ namespace DirectionalMelee
                     }
                 }
             }
-            if (item.useStyle != 3 || player.itemAnimation <= player.itemAnimationMax * 0.666)
+            if (item.useStyle != ItemUseStyleID.Thrust || player.itemAnimation <= player.itemAnimationMax * 0.666)
                 modPlayer.SetItemLocationHand();
         }
 
@@ -108,9 +108,9 @@ namespace DirectionalMelee
             DirectionalMeleePlayer modPlayer = player.GetModPlayer<DirectionalMeleePlayer>();
 
             float itemDirection = modPlayer.GetHeldItemRotation();
-            if (player.itemAnimation > 0 && player.inventory[player.selectedItem].useStyle != 10)
+            if (player.itemAnimation > 0 && player.inventory[player.selectedItem].useStyle != ItemUseStyleID.HiddenAnimation)
             {
-                if (item.useStyle == 3 && player.itemAnimation > player.itemAnimationMax * 0.666f)
+                if (item.useStyle == ItemUseStyleID.Thrust && player.itemAnimation > player.itemAnimationMax * 0.666f)
                 {
                     player.bodyFrame.Y = player.bodyFrame.Height * 6;
                 }
@@ -165,14 +165,14 @@ namespace DirectionalMelee
             }
 #endif
 
-            if (item.useStyle == 1)
+            if (item.useStyle == ItemUseStyleID.Swing)
             {
                 if (hitbox.Width < DirectionalMelee.minHitboxSizeSwing)
                     hitbox.Width = DirectionalMelee.minHitboxSizeSwing;
                 if (hitbox.Height < DirectionalMelee.minHitboxSizeSwing)
                     hitbox.Height = DirectionalMelee.minHitboxSizeSwing;
             }
-            else if (item.useStyle == 3)
+            else if (item.useStyle == ItemUseStyleID.Thrust)
             {
                 if (hitbox.Width < DirectionalMelee.minHitboxSizeStab)
                     hitbox.Width = DirectionalMelee.minHitboxSizeStab;

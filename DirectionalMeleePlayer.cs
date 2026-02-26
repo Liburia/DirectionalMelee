@@ -24,7 +24,7 @@ namespace DirectionalMelee
             float itemDirection = Player.itemRotation * Player.direction * Player.gravDir;
             if (Math.Abs(itemDirection) > DirectionalMelee.PI * 2)
                 itemDirection %= DirectionalMelee.PI * 2;
-            if (item.useStyle == 1 || item.useStyle == 3)
+            if (item.useStyle == ItemUseStyleID.Swing || item.useStyle == ItemUseStyleID.Thrust)
             {
                 itemDirection += DirectionalMelee.quarterPI;
             }
@@ -42,7 +42,7 @@ namespace DirectionalMelee
         {
             Item item = Player.HeldItem;
             float newRotation = itemRotation;
-            if (item.useStyle == 1 || item.useStyle == 3)
+            if (item.useStyle == ItemUseStyleID.Swing || item.useStyle == ItemUseStyleID.Thrust)
             {
                 newRotation -= DirectionalMelee.quarterPI;
             }
@@ -92,7 +92,7 @@ namespace DirectionalMelee
                 {
                     offset = 42f;
                 }
-                if (item.type == 2330 || item.type == 2320 || item.type == 2341)
+                if (item.type == ItemID.PurpleClubberfish || item.type == ItemID.Rockfish || item.type == ItemID.ReaverShark)
                 {
                     offset += 4f;
                 }
@@ -110,7 +110,7 @@ namespace DirectionalMelee
                 {
                     offset = 14f;
                 }
-                if (item.type == 2330 || item.type == 2320 || item.type == 2341)
+                if (item.type == ItemID.PurpleClubberfish || item.type == ItemID.Rockfish || item.type == ItemID.ReaverShark)
                 {
                     offset += 4f;
                 }
@@ -135,7 +135,7 @@ namespace DirectionalMelee
                 {
                     offset = 38f;
                 }
-                if (item.type == 2330 || item.type == 2320 || item.type == 2341)
+                if (item.type == ItemID.PurpleClubberfish || item.type == ItemID.Rockfish || item.type == ItemID.ReaverShark)
                 {
                     offset += 4f;
                 }
@@ -153,7 +153,7 @@ namespace DirectionalMelee
                 {
                     offset = 14f;
                 }
-                if (item.type == 2330 || item.type == 2320 || item.type == 2341)
+                if (item.type == ItemID.PurpleClubberfish || item.type == ItemID.Rockfish || item.type == ItemID.ReaverShark)
                 {
                     offset += 4f;
                 }
@@ -178,7 +178,7 @@ namespace DirectionalMelee
                 {
                     offset = 38f;
                 }
-                if (item.type == 2330 || item.type == 2320 || item.type == 2341)
+                if (item.type == ItemID.PurpleClubberfish || item.type == ItemID.Rockfish || item.type == ItemID.ReaverShark)
                 {
                     offset += 8f;
                 }
@@ -204,7 +204,7 @@ namespace DirectionalMelee
                 {
                     offset = 40f;
                 }
-                if (item.type == 2330 || item.type == 2320 || item.type == 2341)
+                if (item.type == ItemID.PurpleClubberfish || item.type == ItemID.Rockfish || item.type == ItemID.ReaverShark)
                 {
                     offset += 4f;
                 }
@@ -222,7 +222,7 @@ namespace DirectionalMelee
                 {
                     offset = 32f;
                 }
-                if (item.type == 2330 || item.type == 2320 || item.type == 2341)
+                if (item.type == ItemID.PurpleClubberfish || item.type == ItemID.Rockfish || item.type == ItemID.ReaverShark)
                 {
                     offset -= 4f;
                 }

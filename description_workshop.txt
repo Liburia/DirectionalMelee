@@ -1,1 +1,4 @@
-Directional Melee makes all swinging weapons target your mouse cursor instead of always going overhead.
+﻿Directional Melee makes all swinging weapons target your mouse cursor instead of always going overhead.
+
+
+Also check out my other mod — [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3017502881]Path Of Modifiers[/url]
